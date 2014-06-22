@@ -1,0 +1,17 @@
+name: Timelist
+version: 1.0.0
+description: A timed whitelist alternative.
+author: austinv11
+website: austinv11.github.io
+ 
+main: io.github.austinv11.Timelist.Timelist
+commands:
+   opengui2:
+      description: Opens the example gui
+      usage: /<command>
+      permission: Timelist.opengui
+      permission-message: You don't have permission
+
+permissions:
+   Timelist.*:
+        description: Gives access to all Timelist permissions
