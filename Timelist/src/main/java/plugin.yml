@@ -6,12 +6,14 @@ website: austinv11.github.io
  
 main: io.github.austinv11.Timelist.Timelist
 commands:
-   opengui2:
-      description: Opens the example gui
-      usage: /<command>
-      permission: Timelist.opengui
+   timelist:
+      description: The command representing all timelist commands.
+      usage: /<command> help
+      permission: Timelist.timelist
       permission-message: You don't have permission
 
 permissions:
    Timelist.*:
-        description: Gives access to all Timelist permissions
+        description: Gives access to all Timelist permissions.
+   Timelist.timelist:
+        description: The command representing all timelist commands.
