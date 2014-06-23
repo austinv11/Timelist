@@ -6,15 +6,23 @@ import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Timelist extends JavaPlugin implements Listener{
+	FileConfiguration config = getConfig();
 	@Override
 	public void onEnable(){
+		configInit(false);
+		if (config.getBoolean("Options.setToDefault")){
+			configInit(true);
+		}
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().setWhitelist(true);//TODO remove
 		if (getServer().hasWhitelist()){//Removes whitelist when enabled and transfers to new whitelist system
@@ -26,6 +34,32 @@ public class Timelist extends JavaPlugin implements Listener{
 	@Override
 	public void onDisable(){
 		
+	}
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onAttemptedLogin(AsyncPlayerPreLoginEvent event){
+			if (event.getLoginResult() == Result.ALLOWED){
+			if (!TimelistHandler.isWhitelisted(event.getUniqueId().toString())){
+				event.setLoginResult(Result.KICK_WHITELIST);
+				event.setKickMessage(config.getString("Options.whitelistFailureMessage"));
+			}else if (TimelistHandler.getRemainingTime(event.getUniqueId().toString()) == 0){
+				event.setLoginResult(Result.KICK_OTHER);
+				event.setKickMessage(config.getString("Options.timeOutLoginMessage"));
+			}
+		}
+	}
+	public void configInit(boolean revert){
+		if (revert == false){
+			config.addDefault("Options.setToDefault", false);
+			config.addDefault("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
+			config.addDefault("Options.timeOutLoginMessage", "Sorry, you have run out of time");
+			config.options().copyDefaults(true);
+			saveConfig();
+		}else{
+			config.set("Options.setToDefault", false);
+			config.set("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
+			config.set("Options.timeOutLoginMessage", "Sorry, you have run out of time");
+			saveConfig();
+		}
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommandPreProcess(PlayerCommandPreprocessEvent event){
