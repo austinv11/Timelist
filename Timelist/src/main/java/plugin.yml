@@ -17,3 +17,18 @@ permissions:
         description: Gives access to all Timelist permissions.
    Timelist.timelist:
         description: The command representing all timelist commands.
+        default: true
+   Timelist.timelistHelp:
+        description: The command representing the /timelist help command.
+        default: true
+   Timelist.timelistList:
+        description: The command representing the /timelist list command.
+   Timelist.timelistAdd:
+        description: The command representing the /timelist add command.
+   Timelist.timelistRemove:
+        description: The command representing the /timelist remove command.
+   Timelist.timelistSet:
+        description: The command representing the /timelist set command.
+   Timelist.timelistTime:
+        description: The command representing the /timelist time command.
+        default: true

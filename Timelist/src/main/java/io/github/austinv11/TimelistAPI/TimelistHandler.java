@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,8 +31,8 @@ public class TimelistHandler {
 				whitelist = new JSONArray();
 			}
 			json.put("uuid", uuid);
-			json.put("player", player.getName());
-			json.put("time", time);
+			json.put("name", player.getName());
+			json.put("time", Integer.toString(time));
 			whitelist.add(json);
 			FileWriter file = new FileWriter("timelist.json");
 			file.write(whitelist.toJSONString());
@@ -56,9 +59,9 @@ public class TimelistHandler {
 			}else{
 				whitelist = new JSONArray();
 			}
-			json.put("UUID", UUID);
-			json.put("player", playerName);
-			json.put("time", time);
+			json.put("uuid", UUID);
+			json.put("name", playerName);
+			json.put("time", Integer.toString(time));
 			whitelist.add(json);
 			FileWriter file = new FileWriter("timelist.json");
 			file.write(whitelist.toJSONString());
@@ -83,12 +86,20 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				name = (String) json.get("name");
-				time = (int) json.get("time");
-				if (time != 0){
+				time = Integer.parseInt((String) json.get("time"));
+				BigDecimal rTime1 = new BigDecimal(time/60);
+				BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+				if (time > 0){
 					if (returnVal == null){
-						returnVal = name;
+						returnVal = name+"- "+rTime2+"h";
 					}else{
-						returnVal = returnVal+", "+name;
+						returnVal = returnVal+", "+name+"- "+rTime2+"h";
+					}
+				}else if (time == -1){
+					if (returnVal == null){
+						returnVal = name+"- infinite h";
+					}else{
+						returnVal = returnVal+", "+name+"- infinite h";
 					}
 				}
 			}
@@ -112,12 +123,14 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				time = (int) json.get("time");
+				time = Integer.parseInt((String) json.get("time"));
+				BigDecimal rTime1 = new BigDecimal(time/60);
+				BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
 				if (time != 0){
 					if (returnVal == null){
-						returnVal = uuid;
+						returnVal = uuid+"- "+rTime2+"h";
 					}else{
-						returnVal = returnVal+", "+uuid;
+						returnVal = returnVal+", "+uuid+"- "+rTime2+"h";
 					}
 				}
 			}
@@ -130,7 +143,7 @@ public class TimelistHandler {
 		}
 		return returnVal;
 	}
-	public static void setTime(String UUID, String time){
+	public static void setTime(String UUID, int time){
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -142,11 +155,11 @@ public class TimelistHandler {
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
 				player = (String) json.get("name");
-				if (uuid == UUID){
+				if (uuid.contains(UUID)){
 					JSONObject json2 = new JSONObject();
 					json2.put("uuid", uuid);
 					json2.put("player", player);
-					json2.put("time", time);
+					json2.put("time", Integer.toString(time));
 					whitelist2.add(json2);
 				}else{
 					whitelist2.add(json);
@@ -164,7 +177,7 @@ public class TimelistHandler {
 			e.printStackTrace();
 		}
 	}
-	public static void setTime(Player player, String time){
+	public static void setTime(Player player, int time){
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -176,11 +189,11 @@ public class TimelistHandler {
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
 				playerName = (String) json.get("name");
-				if (player.getName() == playerName){
+				if (player.getName().contains(playerName)){
 					JSONObject json2 = new JSONObject();
 					json2.put("uuid", uuid);
 					json2.put("player", player);
-					json2.put("time", time);
+					json2.put("time", Integer.toString(time));
 					whitelist2.add(json2);
 				}else{
 					whitelist2.add(json);
@@ -208,7 +221,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				if (uuid != UUID){
+				if (!uuid.contains(UUID)){
 					whitelist2.add(json);
 				}
 			}
@@ -234,7 +247,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				playerName = (String) json.get("name");
-				if (player.getName() != playerName){
+				if (!player.getName().contains(playerName)){
 					whitelist2.add(json);
 				}
 			}
@@ -261,8 +274,8 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				time = (int) json.get("time");
-				if (uuid == UUID && time != 0){
+				time = Integer.parseInt((String) json.get("time"));
+				if (uuid.contains(UUID) && time != 0){
 					returnVal = true;
 				}
 			}
@@ -286,8 +299,8 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				playerName = (String) json.get("name");
-				time = (int) json.get("time");
-				if (playerName == player.getName() && time != 0){
+				time = Integer.parseInt((String) json.get("time"));
+				if (playerName.contains(player.getName()) && time != 0){
 					returnVal = true;
 				}
 			}
@@ -310,7 +323,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				if (uuid == UUID){
+				if (uuid.contains(UUID)){//FIXME Improve
 					returnVal = true;
 				}
 			}
@@ -333,7 +346,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				playerName = (String) json.get("name");
-				if (playerName == player.getName()){
+				if (playerName.contains(player.getName())){//FIXME Improve
 					returnVal = true;
 				}
 			}
@@ -351,14 +364,16 @@ public class TimelistHandler {
 		int returnVal = 0;
 		String uuid;
 		int time;
+		String sTime;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				time = (int) json.get("time");
-				if (uuid == UUID){
+				sTime = (String) json.get("time");
+				time = Integer.parseInt(sTime);
+				if (uuid.contains(UUID)){
 					returnVal = time;
 				}
 			}
@@ -376,14 +391,16 @@ public class TimelistHandler {
 		int returnVal = 0;
 		String playerName;
 		int time;
+		String sTime;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				playerName = (String) json.get("name");
-				time = (int) json.get("time");
-				if (playerName == player.getName()){
+				sTime = (String) json.get("time");
+				time = Integer.parseInt(sTime);
+				if (playerName.contains(player.getName())){
 					returnVal = time;
 				}
 			}

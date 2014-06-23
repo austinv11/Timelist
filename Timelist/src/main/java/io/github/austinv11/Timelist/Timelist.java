@@ -1,6 +1,12 @@
 package io.github.austinv11.Timelist;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import io.github.austinv11.TimelistAPI.TimeOutEvent;
 import io.github.austinv11.TimelistAPI.TimelistHandler;
+import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
 
 import org.bukkit.ChatColor;
@@ -13,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Timelist extends JavaPlugin implements Listener{
@@ -26,9 +33,16 @@ public class Timelist extends JavaPlugin implements Listener{
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().setWhitelist(true);//TODO remove
 		if (getServer().hasWhitelist()){//Removes whitelist when enabled and transfers to new whitelist system
-			WhitelistConversionHelper.whitelistToTimelist();
-			getServer().setWhitelist(false);
-			getLogger().info("Converted whitelist to timelist!");
+			File f = new File("whitelist.json");
+			if (f.exists()){
+				WhitelistConversionHelper.whitelistToTimelist();
+				getServer().setWhitelist(false);
+				getLogger().info("Converted whitelist to timelist!");
+			}else{
+				getLogger().severe("Error: whitelist.json (NOT whitelist.txt) could not found!");
+				getLogger().info("Disabling this plugin...");
+				getServer().getPluginManager().disablePlugin(this);
+			}
 		}
 	}
 	@Override
@@ -37,14 +51,36 @@ public class Timelist extends JavaPlugin implements Listener{
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onAttemptedLogin(AsyncPlayerPreLoginEvent event){
-			if (event.getLoginResult() == Result.ALLOWED){
+		if (event.getLoginResult() == Result.ALLOWED){
 			if (!TimelistHandler.isWhitelisted(event.getUniqueId().toString())){
 				event.setLoginResult(Result.KICK_WHITELIST);
-				event.setKickMessage(config.getString("Options.whitelistFailureMessage"));
+				event.setKickMessage(ChatColor.RED+config.getString("Options.whitelistFailureMessage"));
 			}else if (TimelistHandler.getRemainingTime(event.getUniqueId().toString()) == 0){
 				event.setLoginResult(Result.KICK_OTHER);
-				event.setKickMessage(config.getString("Options.timeOutLoginMessage"));
+				event.setKickMessage(ChatColor.RED+config.getString("Options.timeOutLoginMessage"));
 			}
+		}
+	}
+	@EventHandler
+	public void onLogin(PlayerLoginEvent event){
+		if (event.getPlayer().isOp()){
+			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
+		}
+		new TimelistScheduler(event.getPlayer(), this);
+		if (TimelistHandler.getRemainingTime(event.getPlayer().getUniqueId().toString()) == -1){
+			event.getPlayer().sendMessage(ChatColor.GOLD+"You have: "+ChatColor.AQUA+"infinite"+ChatColor.GOLD+" hours remaining");
+		}else{
+			BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime(event.getPlayer().getUniqueId().toString())/60);
+			BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+			event.getPlayer().sendMessage(ChatColor.GOLD+"You have: "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+		}
+	}
+	@EventHandler
+	public void onTimeOut(TimeOutEvent event){
+		if (config.getBoolean("Options.kickOnTimeOut")){
+			event.getPlayer().kickPlayer(ChatColor.RED+config.getString("Options.timeOutMessage"));
+		}else{
+			event.getPlayer().sendMessage(ChatColor.RED+config.getString("Options.timeOutMessage"));
 		}
 	}
 	public void configInit(boolean revert){
@@ -52,12 +88,16 @@ public class Timelist extends JavaPlugin implements Listener{
 			config.addDefault("Options.setToDefault", false);
 			config.addDefault("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
 			config.addDefault("Options.timeOutLoginMessage", "Sorry, you have run out of time");
+			config.addDefault("Options.timeOutMessage", "Uh oh! You've run out of time!");
+			config.addDefault("Options.kickOnTimeOut", true);
 			config.options().copyDefaults(true);
 			saveConfig();
 		}else{
 			config.set("Options.setToDefault", false);
 			config.set("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
 			config.set("Options.timeOutLoginMessage", "Sorry, you have run out of time");
+			config.set("Options.timeOutMessage", "Uh oh! You've run out of time!");
+			config.set("Options.kickOnTimeOut", true);
 			saveConfig();
 		}
 	}
@@ -71,10 +111,10 @@ public class Timelist extends JavaPlugin implements Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("timelist")){
-			if (args[0] == "help"){
+			if (args[0].equalsIgnoreCase("help") && sender.hasPermission("Timelist.timelistHelp")){
 				if (args.length < 2){
 					sender.sendMessage("Here's a list of possible /timelist commands:");
-					sender.sendMessage("/timelist help, /timelist list, /timelist add, /timelist remove, /timelist set");
+					sender.sendMessage("/timelist help, /timelist list, /timelist add, /timelist remove, /timelist set, /timelist time");
 					sender.sendMessage("Use /timelist help <command> for help with that command");
 				}else{
 					if (args[1].toLowerCase() == "help"){
@@ -92,7 +132,18 @@ public class Timelist extends JavaPlugin implements Listener{
 					}else if (args[1].toLowerCase() == "set"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist set <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Sets the time (infinite if empty) for the player");
+					}else if (args[1].toLowerCase() == "time"){
+						sender.sendMessage(ChatColor.RED+"Usages: /timelist time <optional:player>");
+						sender.sendMessage(ChatColor.RED+"Gets the remaining time the given player");
 					}
+				}
+			}else if (args[0].equalsIgnoreCase("list") && sender.hasPermission("Timelist.timelistList")){
+				if (args.length < 2){
+					sender.sendMessage(TimelistHandler.listTimelistByName());
+				}else if (args[1].equalsIgnoreCase("uuid")){
+					sender.sendMessage(TimelistHandler.listTimelistByUUID());
+				}else if (args[1].equalsIgnoreCase("player")){
+					sender.sendMessage(TimelistHandler.listTimelistByName());
 				}
 			}else{
 				sender.sendMessage("Use /timelist help for help");
