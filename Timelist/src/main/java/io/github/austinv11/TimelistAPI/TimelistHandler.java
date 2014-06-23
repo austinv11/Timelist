@@ -76,16 +76,20 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		String returnVal = null;
 		String name;
+		int time;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				name = (String) json.get("name");
-				if (returnVal == null){
-					returnVal = name;
-				}else{
-					returnVal = returnVal+", "+name;
+				time = (int) json.get("time");
+				if (time != 0){
+					if (returnVal == null){
+						returnVal = name;
+					}else{
+						returnVal = returnVal+", "+name;
+					}
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -101,16 +105,20 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		String returnVal = null;
 		String uuid;
+		int time;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				if (returnVal == null){
-					returnVal = uuid;
-				}else{
-					returnVal = returnVal+", "+uuid;
+				time = (int) json.get("time");
+				if (time != 0){
+					if (returnVal == null){
+						returnVal = uuid;
+					}else{
+						returnVal = returnVal+", "+uuid;
+					}
 				}
 			}
 		} catch (FileNotFoundException e) {
