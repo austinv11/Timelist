@@ -211,7 +211,7 @@ public class TimelistHandler {
 			e.printStackTrace();
 		}
 	}
-	public static void removePlayer(String UUID, String time){
+	public static void removePlayer(String UUID){
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -237,7 +237,7 @@ public class TimelistHandler {
 			e.printStackTrace();
 		}
 	}
-	public static void removePlayer(Player player, String time){
+	public static void removePlayer(Player player){
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String playerName;

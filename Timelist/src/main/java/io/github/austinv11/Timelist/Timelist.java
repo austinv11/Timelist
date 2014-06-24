@@ -130,7 +130,7 @@ public class Timelist extends JavaPlugin implements Listener{
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add uuid <uuid> <optional: time> or /timelist add time <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Adds a player with specified time (infinite if empty) or adds specified time (infinite if empty) to a player");
 					}else if (args[1].toLowerCase() == "remove"){
-						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove <player> or /timelist remove time <player>");
+						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove player <player> or or /timelist remove uuid <uuid> /timelist remove time player <player> or /timelist remove time uuid <uuid>");
 						sender.sendMessage(ChatColor.RED+"Removes a player from the whitelist or sets time to 0");
 					}else if (args[1].toLowerCase() == "set"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist set <player> <optional:time>");
@@ -167,6 +167,16 @@ public class Timelist extends JavaPlugin implements Listener{
 					}else{
 						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())+Integer.parseInt(args[4]));
 					}
+				}
+			}else if (args[0].equalsIgnoreCase("remove")){
+				if (args[3].equalsIgnoreCase("player")){
+					TimelistHandler.removePlayer(UUIDManager.getUUIDFromPlayer(args[4]).toString());
+				}else if (args[3].equalsIgnoreCase("uuid")){
+					TimelistHandler.removePlayer(args[4]);
+				}else if (args[3].equalsIgnoreCase("time") && args[4].equalsIgnoreCase("player")){
+					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[5]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[5]).toString())-Integer.parseInt(args[6]));
+				}else{
+					TimelistHandler.setTime(args[5], TimelistHandler.getRemainingTime(args[5])-Integer.parseInt(args[6]));
 				}
 			}else{
 				sender.sendMessage("Use /timelist help for help");
