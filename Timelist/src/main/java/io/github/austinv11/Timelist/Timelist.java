@@ -3,12 +3,15 @@ package io.github.austinv11.Timelist;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 import io.github.austinv11.TimelistAPI.TimeOutEvent;
 import io.github.austinv11.TimelistAPI.TimelistHandler;
 import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
+import me.armar.plugins.UUIDManager.UUIDManager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -124,7 +127,7 @@ public class Timelist extends JavaPlugin implements Listener{
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist list <optional:uuid|player>");
 						sender.sendMessage(ChatColor.RED+"Lists the players whitelisted (with time remaining)");
 					}else if (args[1].toLowerCase() == "add"){
-						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add time <player> <optional:time>");
+						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add uuid <uuid> <optional: time> or /timelist add time <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Adds a player with specified time (infinite if empty) or adds specified time (infinite if empty) to a player");
 					}else if (args[1].toLowerCase() == "remove"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove <player> or /timelist remove time <player>");
@@ -144,6 +147,26 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage(TimelistHandler.listTimelistByUUID());
 				}else if (args[1].equalsIgnoreCase("player")){
 					sender.sendMessage(TimelistHandler.listTimelistByName());
+				}
+			}else if (args[0].equalsIgnoreCase("add")){
+				if (args[1].equalsIgnoreCase("player")){
+					if (args.length < 4){
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[3]).toString(), args[3], -1);
+					}else{
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[3]).toString(), args[3], Integer.parseInt(args[4]));
+					}
+				}else if (args[1].equalsIgnoreCase("uuid")){
+					if (args.length < 4){
+						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), -1);
+					}else{
+						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), Integer.parseInt(args[4]));
+					}
+				}else if (args[1].equalsIgnoreCase("time")){
+					if (args.length < 4){
+						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), -1);
+					}else{
+						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())+Integer.parseInt(args[4]));
+					}
 				}
 			}else{
 				sender.sendMessage("Use /timelist help for help");
