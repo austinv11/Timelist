@@ -120,22 +120,22 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage("/timelist help, /timelist list, /timelist add, /timelist remove, /timelist set, /timelist time");
 					sender.sendMessage("Use /timelist help <command> for help with that command");
 				}else{
-					if (args[1].toLowerCase() == "help"){
+					if (args[2].toLowerCase() == "help"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist help <optional:command>");
 						sender.sendMessage(ChatColor.RED+"Use /timelist help <command> for help with that command");
-					}else if (args[1].toLowerCase() == "list"){
+					}else if (args[2].toLowerCase() == "list"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist list <optional:uuid|player>");
 						sender.sendMessage(ChatColor.RED+"Lists the players whitelisted (with time remaining)");
-					}else if (args[1].toLowerCase() == "add"){
+					}else if (args[2].toLowerCase() == "add"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add uuid <uuid> <optional: time> or /timelist add time <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Adds a player with specified time (infinite if empty) or adds specified time (infinite if empty) to a player");
-					}else if (args[1].toLowerCase() == "remove"){
+					}else if (args[2].toLowerCase() == "remove"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove player <player> or or /timelist remove uuid <uuid> /timelist remove time player <player> or /timelist remove time uuid <uuid>");
 						sender.sendMessage(ChatColor.RED+"Removes a player from the whitelist or sets time to 0");
-					}else if (args[1].toLowerCase() == "set"){
+					}else if (args[2].toLowerCase() == "set"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist set <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Sets the time (infinite if empty) for the player");
-					}else if (args[1].toLowerCase() == "time"){
+					}else if (args[2].toLowerCase() == "time"){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist time <optional:player>");
 						sender.sendMessage(ChatColor.RED+"Gets the remaining time the given player");
 					}

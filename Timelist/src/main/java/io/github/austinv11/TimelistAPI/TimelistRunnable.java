@@ -19,6 +19,7 @@ public class TimelistRunnable extends BukkitRunnable{
 			TimeOutEvent event = new TimeOutEvent(play);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			Bukkit.getLogger().info("Alert: Player "+play.getName()+", with UUID "+play.getUniqueId().toString()+" has ran out of time!");
+			this.cancel();
 		}
 	}
 }
