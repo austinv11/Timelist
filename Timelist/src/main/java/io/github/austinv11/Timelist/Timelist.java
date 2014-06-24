@@ -9,13 +9,13 @@ import io.github.austinv11.TimelistAPI.TimeOutEvent;
 import io.github.austinv11.TimelistAPI.TimelistHandler;
 import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
-
 import me.armar.plugins.UUIDManager.UUIDManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -183,6 +183,16 @@ public class Timelist extends JavaPlugin implements Listener{
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), -1);
 				}else{
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), Integer.parseInt(args[3]));
+				}
+			}else if (args[0].equalsIgnoreCase("time")){
+				if (args.length < 2){
+					BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime((Player) sender)/60);
+					BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+					sender.sendMessage(ChatColor.GOLD+"You currently have "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+				}else{
+					BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[1]).toString())/60);
+					BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+					sender.sendMessage(ChatColor.GOLD+args[1]+" currently has "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
 				}
 			}else{
 				sender.sendMessage("Use /timelist help for help");
