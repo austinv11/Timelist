@@ -39,7 +39,7 @@ public class Timelist extends JavaPlugin implements Listener{
 				getServer().setWhitelist(false);
 				getLogger().info("Converted whitelist to timelist!");
 			}else{
-				getLogger().severe("Error: whitelist.json (NOT whitelist.txt) could not found!");
+				getLogger().severe("Error: whitelist.json (NOT whitelist.txt) could not found! Consider updating the version of bukkit");
 				getLogger().info("Disabling this plugin...");
 				getServer().getPluginManager().disablePlugin(this);
 			}
