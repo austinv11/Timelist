@@ -151,38 +151,47 @@ public class Timelist extends JavaPlugin implements Listener{
 			}else if (args[0].equalsIgnoreCase("add")){
 				if (args[1].equalsIgnoreCase("player")){
 					if (args.length < 5){
-						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[3]).toString(), args[3], -1);
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[3], -1);
 					}else{
-						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[3]).toString(), args[3], Integer.parseInt(args[4]));
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[3], Integer.parseInt(args[4]));
 					}
+					sender.sendMessage("Added "+args[3]+" to the timelist!");
 				}else if (args[1].equalsIgnoreCase("uuid")){
 					if (args.length < 5){
 						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), -1);
 					}else{
 						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), Integer.parseInt(args[4]));
 					}
+					sender.sendMessage("Added a player with the uuid of: "+args[3]+" to the timelist!");
 				}else if (args[1].equalsIgnoreCase("time")){
 					if (args.length < 4){
-						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), -1);
+						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), -1);
 					}else{
-						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())+Integer.parseInt(args[4]));
+						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[2]).toString())+Integer.parseInt(args[3]));
 					}
+					sender.sendMessage("Added time for "+args[3]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("remove")){
 				if (args[1].equalsIgnoreCase("player")){
 					TimelistHandler.removePlayer(UUIDManager.getUUIDFromPlayer(args[2]).toString());
+					sender.sendMessage("Removed "+args[2]+" from the timelist!");
 				}else if (args[1].equalsIgnoreCase("uuid")){
 					TimelistHandler.removePlayer(args[2]);
+					sender.sendMessage("Removed a player with the uuid of: "+args[2]+" from the timelist!");
 				}else if (args[1].equalsIgnoreCase("time") && args[2].equalsIgnoreCase("player")){
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())-Integer.parseInt(args[4]));
+					sender.sendMessage("Removed time from "+args[3]+"!");
 				}else{
 					TimelistHandler.setTime(args[3], TimelistHandler.getRemainingTime(args[3])-Integer.parseInt(args[4]));
+					sender.sendMessage("Removed time from a player with the uuid of:"+args[3]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("set")){
-				if (args.length < 4){
-					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), -1);
+				if (args.length < 3){
+					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), -1);
+					sender.sendMessage(args[2]+" now has an infinite amount of time!");
 				}else{
-					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), Integer.parseInt(args[3]));
+					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), Integer.parseInt(args[2]));
+					sender.sendMessage("Set the time of "+args[1]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("time")){
 				if (args.length < 2){
