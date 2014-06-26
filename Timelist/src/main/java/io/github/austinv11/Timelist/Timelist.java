@@ -5,11 +5,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
+import io.github.austinv11.TimelistAPI.ConverterHelper;
 import io.github.austinv11.TimelistAPI.TimeOutEvent;
 import io.github.austinv11.TimelistAPI.TimelistHandler;
 import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
-
 import me.armar.plugins.UUIDManager.UUIDManager;
 
 import org.bukkit.ChatColor;
@@ -35,7 +35,7 @@ public class Timelist extends JavaPlugin implements Listener{
 			configInit(true);
 		}
 		getServer().getPluginManager().registerEvents(this, this);
-		getServer().setWhitelist(true);//TODO remove
+		//getServer().setWhitelist(true);//TODO remove
 		if (getServer().hasWhitelist()){//Removes whitelist when enabled and transfers to new whitelist system
 			File f = new File("whitelist.json");
 			if (f.exists()){
@@ -168,7 +168,8 @@ public class Timelist extends JavaPlugin implements Listener{
 					if (args.length < 4){
 						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), -1);
 					}else{
-						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[2]).toString())+Integer.parseInt(args[3]));
+						String[] args2 = ConverterHelper.removeElements(args, 3);
+						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[2]).toString())+ConverterHelper.getTotalTimes(args2));
 					}
 					sender.sendMessage("Added time for "+args[3]+"!");
 				}
@@ -180,10 +181,12 @@ public class Timelist extends JavaPlugin implements Listener{
 					TimelistHandler.removePlayer(args[2]);
 					sender.sendMessage("Removed a player with the uuid of: "+args[2]+" from the timelist!");
 				}else if (args[1].equalsIgnoreCase("time") && args[2].equalsIgnoreCase("player")){
-					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())-Integer.parseInt(args[4]));
+					String[] args2 = ConverterHelper.removeElements(args, 4);
+					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[3]).toString(), TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[3]).toString())-ConverterHelper.getTotalTimes(args2));
 					sender.sendMessage("Removed time from "+args[3]+"!");
 				}else{
-					TimelistHandler.setTime(args[3], TimelistHandler.getRemainingTime(args[3])-Integer.parseInt(args[4]));
+					String[] args2 = ConverterHelper.removeElements(args, 4);
+					TimelistHandler.setTime(args[3], TimelistHandler.getRemainingTime(args[3])-ConverterHelper.getTotalTimes(args2));
 					sender.sendMessage("Removed time from a player with the uuid of:"+args[3]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("set")){
@@ -191,7 +194,8 @@ public class Timelist extends JavaPlugin implements Listener{
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), -1);
 					sender.sendMessage(args[2]+" now has an infinite amount of time!");
 				}else{
-					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), Integer.parseInt(args[2]));
+					String[] args2 = ConverterHelper.removeElements(args, 2);
+					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), ConverterHelper.getTotalTimes(args2));
 					sender.sendMessage("Set the time of "+args[1]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("time")){

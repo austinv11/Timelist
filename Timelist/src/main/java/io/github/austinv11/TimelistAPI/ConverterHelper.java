@@ -1,7 +1,37 @@
 package io.github.austinv11.TimelistAPI;
 
-public class TimeConverter {
+public class ConverterHelper {
 	private static double weeksPerMonth = 4.34812141;
+	public static String[] removeElements(String args[], int elementsToRemove){
+		String newArray[] = new String[args.length - elementsToRemove];
+		int j = 0;
+		for (int i = 0; i < args.length; i++){
+			if (i >= elementsToRemove){
+				newArray[j] = args[i];
+				j++;
+			}
+		}
+		return newArray;
+	}
+	public static int getTotalTimes(String...args){
+		int total = 0;
+		for (int i = 0; i < args.length; i++){
+			if (args[i].toLowerCase().contains("y")){
+				total = total + convertYears(args[i]);
+			}else if (args[i].toLowerCase().contains("mon")){
+				total = total + convertMonths(args[i]);
+			}else if (args[i].toLowerCase().contains("w")){
+				total = total + convertWeeks(args[i]);
+			}else if (args[i].toLowerCase().contains("d")){
+				total = total + convertDays(args[i]);
+			}else if (args[i].toLowerCase().contains("h")){
+				total = total + convertHours(args[i]);
+			}else if (args[i].toLowerCase().contains("min")){
+				total = total + convertMinutes(args[i]);
+			}
+		}
+		return total;
+	}
 	public static int convertYears(String input){
 		input = input.replace("y", "").replace("Y", "");
 		int years = Integer.parseInt(input);
