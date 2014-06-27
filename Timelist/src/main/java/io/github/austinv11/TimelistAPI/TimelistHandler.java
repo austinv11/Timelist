@@ -16,7 +16,7 @@ import org.json.simple.parser.ParseException;
 
 public class TimelistHandler {
 	public static void addPlayer(Player player, int time){
-		String uuid = player.getUniqueId().toString();
+		String uuid = player.getUniqueId().toString().replace("-", "");
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
 		Object obj;
@@ -46,6 +46,7 @@ public class TimelistHandler {
 		}
 	}
 	public static void addPlayerRaw(String UUID, String playerName, int time){
+		UUID = UUID.replace("-", "");
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
 		Object obj;
@@ -146,6 +147,7 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
+		UUID = UUID.replace("-", "");
 		String player;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
@@ -153,6 +155,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				player = (String) json.get("name");
 				if (uuid.contains(UUID)){
 					JSONObject json2 = new JSONObject();
@@ -187,6 +190,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				playerName = (String) json.get("name");
 				if (player.getName().contains(playerName)){
 					JSONObject json2 = new JSONObject();
@@ -214,12 +218,14 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
+		UUID = UUID.replace("-", "");
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				if (!uuid.contains(UUID)){
 					whitelist2.add(json);
 				}
@@ -266,6 +272,7 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String uuid;
+		UUID = UUID.replace("-", "");
 		int time;
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
@@ -273,6 +280,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				time = Integer.parseInt((String) json.get("time"));
 				if (uuid.contains(UUID) && time != 0){
 					returnVal = true;
@@ -316,12 +324,14 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String uuid;
+		UUID = UUID.replace("-", "");
 		try {
 			Object obj = parser.parse(new FileReader("timelist.json"));
 			JSONArray whitelist = (JSONArray) obj;
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				if (uuid.contains(UUID)){//FIXME Improve
 					returnVal = true;
 				}
@@ -362,6 +372,7 @@ public class TimelistHandler {
 		JSONParser parser = new JSONParser();
 		int returnVal = 0;
 		String uuid;
+		UUID = UUID.replace("-", "");
 		int time;
 		String sTime;
 		try {
@@ -370,6 +381,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
 				sTime = (String) json.get("time");
 				time = Integer.parseInt(sTime);
 				if (uuid.contains(UUID)){
