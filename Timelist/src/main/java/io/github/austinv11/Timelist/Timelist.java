@@ -152,18 +152,20 @@ public class Timelist extends JavaPlugin implements Listener{
 			}else if (args[0].equalsIgnoreCase("add")){
 				if (args[1].equalsIgnoreCase("player")){
 					if (args.length < 5){
-						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[3], -1);
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[2], -1);
 					}else{
-						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[3], Integer.parseInt(args[4]));
+						String[] args2 = ConverterHelper.removeElements(args, 3);
+						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[2], ConverterHelper.getTotalTimes(args2));
 					}
-					sender.sendMessage("Added "+args[3]+" to the timelist!");
+					sender.sendMessage("Added "+args[2]+" to the timelist!");
 				}else if (args[1].equalsIgnoreCase("uuid")){
 					if (args.length < 5){
-						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), -1);
+						TimelistHandler.addPlayerRaw(args[2], UUIDManager.getPlayerFromUUID(UUID.fromString(args[2])), -1);
 					}else{
-						TimelistHandler.addPlayerRaw(args[3], UUIDManager.getPlayerFromUUID(UUID.fromString(args[3])), Integer.parseInt(args[4]));
+						String[] args2 = ConverterHelper.removeElements(args, 3);
+						TimelistHandler.addPlayerRaw(args[2], UUIDManager.getPlayerFromUUID(UUID.fromString(args[2])), ConverterHelper.getTotalTimes(args2));
 					}
-					sender.sendMessage("Added a player with the uuid of: "+args[3]+" to the timelist!");
+					sender.sendMessage("Added a player with the uuid of: "+args[2]+" to the timelist!");
 				}else if (args[1].equalsIgnoreCase("time")){
 					if (args.length < 4){
 						TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[2]).toString(), -1);
