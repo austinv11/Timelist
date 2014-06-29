@@ -46,7 +46,7 @@ public class Timelist extends JavaPlugin implements Listener{
 				getServer().setWhitelist(false);
 				getLogger().info("Converted whitelist to timelist!");
 			}else{
-				getLogger().severe("Error: whitelist.json (NOT whitelist.txt) could not found! Consider updating the version of bukkit");
+				getLogger().severe("Error: whitelist.json and/or white-list.txt could not found! Please consider updating the version of bukkit");
 				getLogger().info("Disabling this plugin...");
 				getServer().getPluginManager().disablePlugin(this);
 			}
@@ -74,15 +74,18 @@ public class Timelist extends JavaPlugin implements Listener{
 			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
 			if (config.getBoolean("Options.updateNotifications")){
 				try{
-					JSONArray array = JSONArrayReader.readJsonFromUrl("http://austinv11.github.io/api/Timelist/"+this.getDescription().getVersion()+".json/");
+					JSONArray array = JSONArrayReader.readJsonFromUrl("http://austinv11.github.io/api/Timelist/news.json");
 					for (int i = 0; i < array.size(); i++){
 						JSONObject json = (JSONObject) array.get(i);
-						if (((int) json.get("severity")) == 1){
-							event.getPlayer().sendMessage("[Timelist][Info] "+((String) json.get("message")));
-						}else if (((int) json.get("severity")) == 2){
-							event.getPlayer().sendMessage("[Timelist]["+ChatColor.GOLD+"Important"+ChatColor.RESET+"] "+((String) json.get("message")));
-						}else if (((int) json.get("severity")) == 3){
-							event.getPlayer().sendMessage("[Timelist]["+ChatColor.RED+"VERY Important!"+ChatColor.RESET+"] "+((String) json.get("message")));
+						String ver = (String) json.get("version");
+						if (ver.contains(this.getDescription().getVersion())){
+							if (((String) json.get("severity")) == "1"){
+								event.getPlayer().sendMessage("[Timelist][Info] "+((String) json.get("message")));
+							}else if (((String) json.get("severity")) == "2"){
+								event.getPlayer().sendMessage("[Timelist]["+ChatColor.GOLD+"Important"+ChatColor.RESET+"] "+((String) json.get("message")));
+							}else{
+								event.getPlayer().sendMessage("[Timelist]["+ChatColor.RED+"VERY Important!"+ChatColor.RESET+"] "+((String) json.get("message")));
+							}
 						}
 					}
 				}catch (Exception e){

@@ -16,7 +16,7 @@ public class JSONReader {
 	public static JSONObject readJsonFromUrl(String url) throws IOException, ParseException{
 		InputStream is = new URL(url).openStream();
 		try {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 			String jsonText = readAll(rd);
 			JSONObject json = (JSONObject) new JSONParser().parse(jsonText);
 			return json;
