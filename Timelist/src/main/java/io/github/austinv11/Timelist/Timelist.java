@@ -10,6 +10,7 @@ import io.github.austinv11.TimelistAPI.TimeOutEvent;
 import io.github.austinv11.TimelistAPI.TimelistHandler;
 import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
+import io.github.austinv11.WebUtils.JSONArrayReader;
 import me.armar.plugins.UUIDManager.UUIDManager;
 
 import org.bukkit.ChatColor;
@@ -25,6 +26,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class Timelist extends JavaPlugin implements Listener{
 	FileConfiguration config = getConfig();
@@ -69,6 +72,23 @@ public class Timelist extends JavaPlugin implements Listener{
 	public void onLogin(PlayerLoginEvent event){
 		if (event.getPlayer().isOp()){
 			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
+			if (config.getBoolean("Options.updateNotifications")){
+				try{
+					JSONArray array = JSONArrayReader.readJsonFromUrl("http://austinv11.github.io/api/Timelist/"+this.getDescription().getVersion()+".json/");
+					for (int i = 0; i < array.size(); i++){
+						JSONObject json = (JSONObject) array.get(i);
+						if (((int) json.get("severity")) == 1){
+							event.getPlayer().sendMessage("[Timelist][Info] "+((String) json.get("message")));
+						}else if (((int) json.get("severity")) == 2){
+							event.getPlayer().sendMessage("[Timelist]["+ChatColor.GOLD+"Important"+ChatColor.RESET+"] "+((String) json.get("message")));
+						}else if (((int) json.get("severity")) == 3){
+							event.getPlayer().sendMessage("[Timelist]["+ChatColor.RED+"VERY Important!"+ChatColor.RESET+"] "+((String) json.get("message")));
+						}
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
 		}
 		new TimelistScheduler(event.getPlayer(), this);
 		if (TimelistHandler.getRemainingTime(event.getPlayer().getUniqueId().toString()) == -1){
@@ -94,6 +114,7 @@ public class Timelist extends JavaPlugin implements Listener{
 			config.addDefault("Options.timeOutLoginMessage", "Sorry, you have run out of time");
 			config.addDefault("Options.timeOutMessage", "Uh oh! You've run out of time!");
 			config.addDefault("Options.kickOnTimeOut", true);
+			config.addDefault("Options.updateNotifications", true);
 			config.options().copyDefaults(true);
 			saveConfig();
 		}else{
@@ -102,6 +123,7 @@ public class Timelist extends JavaPlugin implements Listener{
 			config.set("Options.timeOutLoginMessage", "Sorry, you have run out of time");
 			config.set("Options.timeOutMessage", "Uh oh! You've run out of time!");
 			config.set("Options.kickOnTimeOut", true);
+			config.set("Options.updateNotifications", true);
 			saveConfig();
 		}
 	}
