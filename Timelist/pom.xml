@@ -4,7 +4,7 @@
 
   <groupId>io.github.austinv11</groupId>
   <artifactId>Timelist</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-b1</version>
   <packaging>jar</packaging>
 
   <name>Timelist</name>
