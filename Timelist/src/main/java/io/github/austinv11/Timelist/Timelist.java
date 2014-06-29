@@ -151,7 +151,7 @@ public class Timelist extends JavaPlugin implements Listener{
 				}
 			}else if (args[0].equalsIgnoreCase("add")){
 				if (args[1].equalsIgnoreCase("player")){
-					if (args.length < 5){
+					if (args.length < 4){
 						TimelistHandler.addPlayerRaw(UUIDManager.getUUIDFromPlayer(args[2]).toString(), args[2], -1);
 					}else{
 						String[] args2 = ConverterHelper.removeElements(args, 3);
@@ -159,7 +159,7 @@ public class Timelist extends JavaPlugin implements Listener{
 					}
 					sender.sendMessage("Added "+args[2]+" to the timelist!");
 				}else if (args[1].equalsIgnoreCase("uuid")){
-					if (args.length < 5){
+					if (args.length < 4){
 						TimelistHandler.addPlayerRaw(args[2], UUIDManager.getPlayerFromUUID(UUID.fromString(args[2])), -1);
 					}else{
 						String[] args2 = ConverterHelper.removeElements(args, 3);
@@ -192,7 +192,7 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage("Removed time from a player with the uuid of:"+args[3]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("set")){
-				if (args.length < 3){
+				if (args.length < 4){
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), -1);
 					sender.sendMessage(args[2]+" now has an infinite amount of time!");
 				}else{
@@ -201,7 +201,7 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage("Set the time of "+args[1]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("time")){
-				if (args.length < 2){
+				if (args.length < 3){
 					BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime((Player) sender)/60);
 					BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
 					sender.sendMessage(ChatColor.GOLD+"You currently have "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
