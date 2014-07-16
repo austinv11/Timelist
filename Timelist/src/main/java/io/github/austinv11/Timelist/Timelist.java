@@ -12,7 +12,9 @@ import io.github.austinv11.TimelistAPI.TimelistScheduler;
 import io.github.austinv11.TimelistAPI.WhitelistConversionHelper;
 import io.github.austinv11.WebUtils.JSONArrayReader;
 import me.armar.plugins.UUIDManager.UUIDManager;
+import net.gravitydevelopment.updater.Updater;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,11 +33,20 @@ import org.json.simple.JSONObject;
 
 public class Timelist extends JavaPlugin implements Listener{
 	FileConfiguration config = getConfig();
+	String CURRENT_VERSION = this.getDescription().getVersion();
+	String CURRENT_GAME_VERSION = Bukkit.getBukkitVersion();
+	int id = 81839;
 	@Override
 	public void onEnable(){
 		configInit(false);
 		if (config.getBoolean("Options.setToDefault")){
 			configInit(true);
+		}
+		if (config.getBoolean("Options.autoUpdater") == true){
+			Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
+			if (updater.getLatestGameVersion() == CURRENT_GAME_VERSION){
+				Updater updaterAuto = new Updater(this, id, this.getFile(), Updater.UpdateType.DEFAULT, true);
+			}
 		}
 		getServer().getPluginManager().registerEvents(this, this);
 		//getServer().setWhitelist(true);//TODO remove
@@ -113,6 +124,7 @@ public class Timelist extends JavaPlugin implements Listener{
 	public void configInit(boolean revert){
 		if (revert == false){
 			config.addDefault("Options.setToDefault", false);
+			config.addDefault("Options.autoUpdater", true);
 			config.addDefault("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
 			config.addDefault("Options.timeOutLoginMessage", "Sorry, you have run out of time");
 			config.addDefault("Options.timeOutMessage", "Uh oh! You've run out of time!");
@@ -122,6 +134,7 @@ public class Timelist extends JavaPlugin implements Listener{
 			saveConfig();
 		}else{
 			config.set("Options.setToDefault", false);
+			config.set("Options.autoUpdater", true);
 			config.set("Options.whitelistFailureMessage", "Sorry, you have not been whitelisted");
 			config.set("Options.timeOutLoginMessage", "Sorry, you have run out of time");
 			config.set("Options.timeOutMessage", "Uh oh! You've run out of time!");
