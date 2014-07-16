@@ -82,7 +82,7 @@ public class Timelist extends JavaPlugin implements Listener{
 	}
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event){
-		if (event.getPlayer().isOp()){
+		if (event.getPlayer().hasPermission("Timelist.infiniteTime")){
 			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
 			if (config.getBoolean("Options.updateNotifications")){
 				try{
@@ -172,7 +172,7 @@ public class Timelist extends JavaPlugin implements Listener{
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add uuid <uuid> <optional: time> or /timelist add time <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Adds a player with specified time (infinite if empty) or adds specified time (infinite if empty) to a player");
 					}else if (args[1].toLowerCase().contains("remove")){
-						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove player <player> or or /timelist remove uuid <uuid> /timelist remove time player <player> or /timelist remove time uuid <uuid>");
+						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove player <player> or or /timelist remove uuid <uuid> /timelist remove time player <player> <time> or /timelist remove time uuid <uuid> <time>");
 						sender.sendMessage(ChatColor.RED+"Removes a player from the whitelist or sets time to 0");
 					}else if (args[1].toLowerCase().contains("set")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist set <player> <optional:time>");
@@ -235,23 +235,31 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage("Removed time from a player with the uuid of:"+args[3]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("set")){
-				if (args.length < 4){
+				if (args.length < 3){
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), -1);
-					sender.sendMessage(args[2]+" now has an infinite amount of time!");
+					sender.sendMessage(args[1]+" now has an infinite amount of time!");
 				}else{
 					String[] args2 = ConverterHelper.removeElements(args, 2);
 					TimelistHandler.setTime(UUIDManager.getUUIDFromPlayer(args[1]).toString(), ConverterHelper.getTotalTimes(args2));
 					sender.sendMessage("Set the time of "+args[1]+"!");
 				}
 			}else if (args[0].equalsIgnoreCase("time")){
-				if (args.length < 3){
-					BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime((Player) sender)/60);
-					BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
-					sender.sendMessage(ChatColor.GOLD+"You currently have "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+				if (args.length < 2){
+					if (TimelistHandler.getRemainingTime((Player) sender) != -1){
+						BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime((Player) sender)/60);
+						BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+						sender.sendMessage(ChatColor.GOLD+"You currently have "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+					}else{
+						sender.sendMessage(ChatColor.GOLD+"You currently have "+ChatColor.AQUA+"infinite"+ChatColor.GOLD+" hours remaining");
+						}
 				}else{
-					BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[1]).toString())/60);
-					BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
-					sender.sendMessage(ChatColor.GOLD+args[1]+" currently has "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+					if (TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[1]).toString()) != -1){
+						BigDecimal rTime1 = new BigDecimal(TimelistHandler.getRemainingTime(UUIDManager.getUUIDFromPlayer(args[1]).toString())/60);
+						BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
+						sender.sendMessage(ChatColor.GOLD+args[1]+" currently has "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
+					}else{
+						sender.sendMessage(ChatColor.GOLD+args[1]+" currently has "+ChatColor.AQUA+"infinite"+ChatColor.GOLD+" hours remaining");
+					}
 				}
 			}else{
 				sender.sendMessage(ChatColor.RED+"Use /timelist help for help");

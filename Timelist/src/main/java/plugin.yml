@@ -32,3 +32,5 @@ permissions:
    Timelist.timelistTime:
         description: The command representing the /timelist time command.
         default: true
+   Timelist.isOp:
+        description: Whether the player can has infinite time on the server and can see admin-only messages.

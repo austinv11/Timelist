@@ -11,14 +11,18 @@ public class TimelistRunnable extends BukkitRunnable{
 	}
 	@Override
 	public void run(){
-		int time = TimelistHandler.getRemainingTime(play.getUniqueId().toString());
-		if (time != -1 && time != 0){
-			time--;
-			TimelistHandler.setTime(play.getUniqueId().toString(), time);
-		}else if (time == 0){
-			TimeOutEvent event = new TimeOutEvent(play);
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			Bukkit.getLogger().info("Alert: Player "+play.getName()+", with UUID "+play.getUniqueId().toString()+" has ran out of time!");
+		if (play.isOnline()){
+			int time = TimelistHandler.getRemainingTime(play.getUniqueId().toString());
+			if (time != -1 && time != 0){
+				time--;
+				TimelistHandler.setTime(play.getUniqueId().toString(), time);
+			}else if (time == 0){
+				TimeOutEvent event = new TimeOutEvent(play);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				Bukkit.getLogger().info("Alert: Player "+play.getName()+", with UUID "+play.getUniqueId().toString()+" has ran out of time!");
+				this.cancel();
+			}
+		}else{
 			this.cancel();
 		}
 	}

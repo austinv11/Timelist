@@ -20,7 +20,7 @@ import org.json.simple.parser.ParseException;
 public class TimelistHandler {
 	public static void addPlayer(Player player, int time){
 		ignMender();
-		String uuid = player.getUniqueId().toString().replace("-", "");
+		String uuid = player.getUniqueId().toString()/*.replace("-", "")*/;
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
 		Object obj;
@@ -51,7 +51,7 @@ public class TimelistHandler {
 	}
 	public static void addPlayerRaw(String UUID, String playerName, int time){
 		ignMender();
-		UUID = UUID.replace("-", "");
+		//UUID = UUID.replace("-", "");
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
 		Object obj;
@@ -135,9 +135,9 @@ public class TimelistHandler {
 				BigDecimal rTime2 = rTime1.setScale(2, RoundingMode.DOWN);
 				if (time != 0){
 					if (returnVal == null){
-						returnVal = uuid+"- "+rTime2+"h";
+						returnVal = uuid+": "+rTime2+"h";
 					}else{
-						returnVal = returnVal+", "+uuid+"- "+rTime2+"h";
+						returnVal = returnVal+", "+uuid+": "+rTime2+"h";
 					}
 				}
 			}
@@ -163,9 +163,9 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				uuid = uuid.replace("-", "");
+				//uuid = uuid.replace("-", "");
 				player = (String) json.get("name");
-				if (uuid.contains(UUID)){
+				if (uuid.replace("-", "").contains(UUID)){
 					JSONObject json2 = new JSONObject();
 					json2.put("uuid", uuid);
 					json2.put("player", player);
@@ -199,7 +199,7 @@ public class TimelistHandler {
 			for(int i = 0; i < whitelist.size(); i++){
 				JSONObject json = (JSONObject) whitelist.get(i);
 				uuid = (String) json.get("uuid");
-				uuid = uuid.replace("-", "");
+				//uuid = uuid.replace("-", "");
 				playerName = (String) json.get("name");
 				if (player.getName().toLowerCase().contains(playerName.toLowerCase())){
 					JSONObject json2 = new JSONObject();
@@ -442,40 +442,43 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	private static void ignMender(){
+		File f = new File("timelist.json");
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		JSONObject json2 = new JSONObject();
 		String uuid;
 		String name;
 		String time;
-		try {
-			Object obj = parser.parse(new FileReader("timelist.json"));
-			JSONArray whitelist = (JSONArray) obj;
-			for(int i = 0; i < whitelist.size(); i++){
-				JSONObject json = (JSONObject) whitelist.get(i);
-				uuid = (String) json.get("uuid");
-				uuid = uuid.replace("-", "");
-				name = (String) json.get("name");
-				time = (String) json.get("time");
-				if (name == null || name == "null"){
-					json2.put("time", time);
-					json2.put("name", UUIDManager.getPlayerFromUUID(UUID.fromString((String) json.get("uuid"))));
-					json2.put("uuid", uuid);
-					whitelist2.add(json2);
-				}else{
-					whitelist2.add(json);
+		if (f.exists()){
+			try {
+				Object obj = parser.parse(new FileReader("timelist.json"));
+				JSONArray whitelist = (JSONArray) obj;
+				for(int i = 0; i < whitelist.size(); i++){
+					JSONObject json = (JSONObject) whitelist.get(i);
+					uuid = (String) json.get("uuid");
+					//uuid = uuid.replace("-", "");
+					name = (String) json.get("name");
+					time = (String) json.get("time");
+					if (name == null || name == "null"){
+						json2.put("time", time);
+						json2.put("name", UUIDManager.getPlayerFromUUID(UUID.fromString((String) json.get("uuid"))));
+						json2.put("uuid", uuid);
+						whitelist2.add(json2);
+					}else{
+						whitelist2.add(json);
+					}
 				}
+				FileWriter file = new FileWriter("timelist.json");
+				file.write(whitelist2.toJSONString());
+				file.flush();
+				file.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-			FileWriter file = new FileWriter("timelist.json");
-			file.write(whitelist2.toJSONString());
-			file.flush();
-			file.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 	}
 }
