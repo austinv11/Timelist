@@ -38,7 +38,7 @@ public class Timelist extends JavaPlugin implements Listener{
 	int id = 81839;
 	@Override
 	public void onEnable(){
-		getLogger().info(CURRENT_GAME_VERSION);
+		//getLogger().info(CURRENT_GAME_VERSION);
 		configInit(false);
 		if (config.getBoolean("Options.setToDefault")){
 			configInit(true);
@@ -154,30 +154,34 @@ public class Timelist extends JavaPlugin implements Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("timelist")){
-			if (args[0].equalsIgnoreCase("help") && sender.hasPermission("Timelist.timelistHelp")){
+			if (args.length < 1){
+				sender.sendMessage(ChatColor.RED+"Use /timelist help for help");
+			}else if (args[0].equalsIgnoreCase("help") && sender.hasPermission("Timelist.timelistHelp")){
 				if (args.length < 2){
 					sender.sendMessage("Here's a list of possible /timelist commands:");
 					sender.sendMessage("/timelist help, /timelist list, /timelist add, /timelist remove, /timelist set, /timelist time");
 					sender.sendMessage("Use /timelist help <command> for help with that command");
 				}else{
-					if (args[2].toLowerCase() == "help"){
+					if (args[1].toLowerCase().contains("help")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist help <optional:command>");
 						sender.sendMessage(ChatColor.RED+"Use /timelist help <command> for help with that command");
-					}else if (args[2].toLowerCase() == "list"){
+					}else if (args[1].toLowerCase().contains("list")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist list <optional:uuid|player>");
 						sender.sendMessage(ChatColor.RED+"Lists the players whitelisted (with time remaining)");
-					}else if (args[2].toLowerCase() == "add"){
+					}else if (args[1].toLowerCase().contains("add")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist add player <player> <optional:time> or /timelist add uuid <uuid> <optional: time> or /timelist add time <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Adds a player with specified time (infinite if empty) or adds specified time (infinite if empty) to a player");
-					}else if (args[2].toLowerCase() == "remove"){
+					}else if (args[1].toLowerCase().contains("remove")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist remove player <player> or or /timelist remove uuid <uuid> /timelist remove time player <player> or /timelist remove time uuid <uuid>");
 						sender.sendMessage(ChatColor.RED+"Removes a player from the whitelist or sets time to 0");
-					}else if (args[2].toLowerCase() == "set"){
+					}else if (args[1].toLowerCase().contains("set")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist set <player> <optional:time>");
 						sender.sendMessage(ChatColor.RED+"Sets the time (infinite if empty) for the player");
-					}else if (args[2].toLowerCase() == "time"){
+					}else if (args[1].toLowerCase().contains("time")){
 						sender.sendMessage(ChatColor.RED+"Usages: /timelist time <optional:player>");
 						sender.sendMessage(ChatColor.RED+"Gets the remaining time the given player");
+					}else{
+						sender.sendMessage(ChatColor.RED+"Oh no! Looks like something broke!");
 					}
 				}
 			}else if (args[0].equalsIgnoreCase("list") && sender.hasPermission("Timelist.timelistList")){
@@ -250,7 +254,7 @@ public class Timelist extends JavaPlugin implements Listener{
 					sender.sendMessage(ChatColor.GOLD+args[1]+" currently has "+ChatColor.AQUA+rTime2+ChatColor.GOLD+" hours remaining");
 				}
 			}else{
-				sender.sendMessage("Use /timelist help for help");
+				sender.sendMessage(ChatColor.RED+"Use /timelist help for help");
 			}
 			return true;
 		}

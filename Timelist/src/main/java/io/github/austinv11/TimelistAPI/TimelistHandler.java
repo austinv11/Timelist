@@ -7,6 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
+
+import me.armar.plugins.UUIDManager.UUIDManager;
 
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -16,6 +19,7 @@ import org.json.simple.parser.ParseException;
 
 public class TimelistHandler {
 	public static void addPlayer(Player player, int time){
+		ignMender();
 		String uuid = player.getUniqueId().toString().replace("-", "");
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
@@ -46,6 +50,7 @@ public class TimelistHandler {
 		}
 	}
 	public static void addPlayerRaw(String UUID, String playerName, int time){
+		ignMender();
 		UUID = UUID.replace("-", "");
 		JSONObject json = new JSONObject();
 		JSONParser parser = new JSONParser();
@@ -76,6 +81,7 @@ public class TimelistHandler {
 		}
 	}
 	public static String listTimelistByName(){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		String returnVal = null;
 		String name;
@@ -113,6 +119,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static String listTimelistByUUID(){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		String returnVal = null;
 		String uuid;
@@ -144,6 +151,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static void setTime(String UUID, int time){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -180,6 +188,7 @@ public class TimelistHandler {
 		}
 	}
 	public static void setTime(Player player, int time){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -215,6 +224,7 @@ public class TimelistHandler {
 		}
 	}
 	public static void removePlayer(String UUID){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String uuid;
@@ -243,6 +253,7 @@ public class TimelistHandler {
 		}
 	}
 	public static void removePlayer(Player player){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		JSONArray whitelist2 = new JSONArray();
 		String playerName;
@@ -269,6 +280,7 @@ public class TimelistHandler {
 		}
 	}
 	public static boolean timedWhitelistStatus(String UUID){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String uuid;
@@ -296,6 +308,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static boolean timedWhitelistStatus(Player player){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String playerName;
@@ -321,6 +334,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static boolean isWhitelisted(String UUID){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String uuid;
@@ -346,6 +360,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static boolean isWhitelisted(Player player){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		boolean returnVal = false;
 		String playerName;
@@ -369,6 +384,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static int getRemainingTime(String UUID){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		int returnVal = 0;
 		String uuid;
@@ -398,6 +414,7 @@ public class TimelistHandler {
 		return returnVal;
 	}
 	public static int getRemainingTime(Player player){
+		ignMender();
 		JSONParser parser = new JSONParser();
 		int returnVal = 0;
 		String playerName;
@@ -423,5 +440,42 @@ public class TimelistHandler {
 			e.printStackTrace();
 		}
 		return returnVal;
+	}
+	private static void ignMender(){
+		JSONParser parser = new JSONParser();
+		JSONArray whitelist2 = new JSONArray();
+		JSONObject json2 = new JSONObject();
+		String uuid;
+		String name;
+		String time;
+		try {
+			Object obj = parser.parse(new FileReader("timelist.json"));
+			JSONArray whitelist = (JSONArray) obj;
+			for(int i = 0; i < whitelist.size(); i++){
+				JSONObject json = (JSONObject) whitelist.get(i);
+				uuid = (String) json.get("uuid");
+				uuid = uuid.replace("-", "");
+				name = (String) json.get("name");
+				time = (String) json.get("time");
+				if (name == null || name == "null"){
+					json2.put("time", time);
+					json2.put("name", UUIDManager.getPlayerFromUUID(UUID.fromString((String) json.get("uuid"))));
+					json2.put("uuid", uuid);
+					whitelist2.add(json2);
+				}else{
+					whitelist2.add(json);
+				}
+			}
+			FileWriter file = new FileWriter("timelist.json");
+			file.write(whitelist2.toJSONString());
+			file.flush();
+			file.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 }
