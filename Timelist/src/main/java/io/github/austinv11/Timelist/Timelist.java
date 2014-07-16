@@ -82,7 +82,7 @@ public class Timelist extends JavaPlugin implements Listener{
 	}
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event){
-		if (event.getPlayer().hasPermission("Timelist.infiniteTime")){
+		if (event.getPlayer().hasPermission("Timelist.isOp")){
 			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
 			if (config.getBoolean("Options.updateNotifications")){
 				try{
