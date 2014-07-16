@@ -34,17 +34,18 @@ import org.json.simple.JSONObject;
 public class Timelist extends JavaPlugin implements Listener{
 	FileConfiguration config = getConfig();
 	String CURRENT_VERSION = this.getDescription().getVersion();
-	String CURRENT_GAME_VERSION = Bukkit.getBukkitVersion();
+	String CURRENT_GAME_VERSION = Bukkit.getBukkitVersion().substring(3, 6);
 	int id = 81839;
 	@Override
 	public void onEnable(){
+		getLogger().info(CURRENT_GAME_VERSION);
 		configInit(false);
 		if (config.getBoolean("Options.setToDefault")){
 			configInit(true);
 		}
 		if (config.getBoolean("Options.autoUpdater") == true){
 			Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
-			if (updater.getLatestGameVersion() == CURRENT_GAME_VERSION){
+			if (updater.getLatestGameVersion().contains(CURRENT_GAME_VERSION)){
 				Updater updaterAuto = new Updater(this, id, this.getFile(), Updater.UpdateType.DEFAULT, true);
 			}
 		}
