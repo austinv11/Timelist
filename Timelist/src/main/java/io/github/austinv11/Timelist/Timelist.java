@@ -34,7 +34,7 @@ import org.json.simple.JSONObject;
 public class Timelist extends JavaPlugin implements Listener{
 	FileConfiguration config = getConfig();
 	String CURRENT_VERSION = this.getDescription().getVersion();
-	String CURRENT_GAME_VERSION = Bukkit.getBukkitVersion().substring(3, 6);
+	String CURRENT_GAME_VERSION = Bukkit.getBukkitVersion().substring(0, 3);
 	int id = 81839;
 	@Override
 	public void onEnable(){
