@@ -18,12 +18,13 @@ import org.json.simple.parser.ParseException;
 public class WhitelistConversionHelper {
 	private static boolean isTimelist;
 	public static void whitelistToTimelist(){
-		File f = new File("whitelist.txt");
-		File f2 = new File("white-list.txt");
+		File f = new File("whitelist.json");
+		File f2 = new File("whitelist.txt");
+		File f3 = new File("white-list.txt");
 		JSONParser parser = new JSONParser();
 		String name;
 		String uuid;
-		if (f.exists()){
+		if (!f.exists() && f2.exists()){
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader("whitelist.txt"));
 				String line = null;
@@ -35,7 +36,7 @@ public class WhitelistConversionHelper {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}else if (f2.exists()){
+		}else if (!f.exists() && f2.exists()){
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader("white-list.txt"));
 				String line = null;
