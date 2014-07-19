@@ -84,7 +84,7 @@ public class Timelist extends JavaPlugin implements Listener{
 	public void onLogin(PlayerLoginEvent event){
 		if (event.getPlayer().hasPermission("Timelist.isOp")){
 			TimelistHandler.setTime(event.getPlayer().getUniqueId().toString(), -1);
-			if (config.getBoolean("Options.updateNotifications")){
+			/*if (config.getBoolean("Options.updateNotifications")){
 				try{
 					JSONArray array = JSONArrayReader.readJsonFromUrl("http://austinv11.github.io/api/Timelist/news.json");
 					for (int i = 0; i < array.size(); i++){
@@ -103,7 +103,7 @@ public class Timelist extends JavaPlugin implements Listener{
 				}catch (Exception e){
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 		new TimelistScheduler(event.getPlayer(), this);
 		if (TimelistHandler.getRemainingTime(event.getPlayer().getUniqueId().toString()) == -1){
